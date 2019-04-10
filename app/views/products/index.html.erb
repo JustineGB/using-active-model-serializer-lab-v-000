@@ -9,16 +9,22 @@
 $(function() {
   $(".js-more").on("click", function() {
     var id = $(this).data("id");
-    $.get("/products/" + id + "/description", function(description) {
-      $.get("/products/" + id + "/inventory", function(inventory) {
-        var inventoryText = "<strong>Available</strong>";
-        if(inventory === "false"){
+    $.get("/products/" + id + ".json", function(data) { //is there an issue with this route?
+      var inventoryText = "<strong>Available</strong>";
+        if(data["inventory"] === 0){
           inventoryText = "<strong>Sold Out</strong>";
         }
-        var descriptionText = "<p>" + description + "</p><p>" + inventoryText + "</p>";
-        $("#product-" + id).html(descriptionText);
+      var descriptionText = "<p>" + data["description"] + "</p><p>" + inventoryText + "</p>";
+            //alert(data["orders"]);
+      var orders = data["orders"]
+      var orderList = ""
+      orders.forEach(function(order){
+        orderList += `<li class="js-order" data-id="${order["id"]}">${order["id"]} - ${order["created_at"]}</li>`
+        })
+      $("#product-" + id).html(descriptionText);
+  $("#product-" + id).html(orderList);
       });
     });
   });
-});
 </script>
+
